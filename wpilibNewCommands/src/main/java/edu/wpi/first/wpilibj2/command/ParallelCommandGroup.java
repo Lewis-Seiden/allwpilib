@@ -21,7 +21,7 @@ public class ParallelCommandGroup extends Command {
   // maps commands in this composition to whether they are still running
   private final Map<Command, Boolean> m_commands = new HashMap<>();
   private boolean m_runWhenDisabled = true;
-  private InterruptionBehavior m_interruptBehavior = InterruptionBehavior.kCancelIncoming;
+  private int m_priority = -1;
 
   /**
    * Creates a new ParallelCommandGroup. The given commands will be executed simultaneously. The
@@ -55,8 +55,8 @@ public class ParallelCommandGroup extends Command {
       m_commands.put(command, false);
       m_requirements.addAll(command.getRequirements());
       m_runWhenDisabled &= command.runsWhenDisabled();
-      if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
-        m_interruptBehavior = InterruptionBehavior.kCancelSelf;
+      if (command.getPriority() > m_priority) {
+        m_priority = command.getPriority();
       }
     }
   }
@@ -105,7 +105,7 @@ public class ParallelCommandGroup extends Command {
   }
 
   @Override
-  public InterruptionBehavior getInterruptionBehavior() {
-    return m_interruptBehavior;
+  public int getPriority() {
+    return m_priority;
   }
 }

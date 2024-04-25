@@ -96,6 +96,19 @@ public abstract class Command implements Sendable {
     }
   }
 
+  public int getPriority() {
+    return -1;
+  }
+
+  public final WrapperCommand setPriority(int priority) {
+    return new WrapperCommand(this) {
+      @Override
+      public int getPriority() {
+        return priority;
+      }
+    };
+  }
+
   /**
    * Gets the name of this Command.
    *
@@ -413,21 +426,6 @@ public abstract class Command implements Sendable {
   }
 
   /**
-   * Decorates this command to have a different {@link InterruptionBehavior interruption behavior}.
-   *
-   * @param interruptBehavior the desired interrupt behavior
-   * @return the decorated command
-   */
-  public WrapperCommand withInterruptBehavior(InterruptionBehavior interruptBehavior) {
-    return new WrapperCommand(this) {
-      @Override
-      public InterruptionBehavior getInterruptionBehavior() {
-        return interruptBehavior;
-      }
-    };
-  }
-
-  /**
    * Decorates this command with a lambda to call on interrupt or end, following the command's
    * inherent {@link #end(boolean)} method.
    *
@@ -511,16 +509,6 @@ public abstract class Command implements Sendable {
   }
 
   /**
-   * How the command behaves when another command with a shared requirement is scheduled.
-   *
-   * @return a variant of {@link InterruptionBehavior}, defaulting to {@link
-   *     InterruptionBehavior#kCancelSelf kCancelSelf}.
-   */
-  public InterruptionBehavior getInterruptionBehavior() {
-    return InterruptionBehavior.kCancelSelf;
-  }
-
-  /**
    * Whether the given command should run when the robot is disabled. Override to return true if the
    * command should run when disabled.
    *
@@ -562,24 +550,6 @@ public abstract class Command implements Sendable {
         });
     builder.addBooleanProperty(
         ".isParented", () -> CommandScheduler.getInstance().isComposed(this), null);
-    builder.addStringProperty(
-        "interruptBehavior", () -> getInterruptionBehavior().toString(), null);
     builder.addBooleanProperty("runsWhenDisabled", this::runsWhenDisabled, null);
-  }
-
-  /**
-   * An enum describing the command's behavior when another command with a shared requirement is
-   * scheduled.
-   */
-  public enum InterruptionBehavior {
-    /**
-     * This command ends, {@link #end(boolean) end(true)} is called, and the incoming command is
-     * scheduled normally.
-     *
-     * <p>This is the default behavior.
-     */
-    kCancelSelf,
-    /** This command continues, and the incoming command is not scheduled. */
-    kCancelIncoming
   }
 }

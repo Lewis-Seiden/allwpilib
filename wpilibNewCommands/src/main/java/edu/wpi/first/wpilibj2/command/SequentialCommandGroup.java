@@ -21,7 +21,7 @@ public class SequentialCommandGroup extends Command {
   private final List<Command> m_commands = new ArrayList<>();
   private int m_currentCommandIndex = -1;
   private boolean m_runWhenDisabled = true;
-  private InterruptionBehavior m_interruptBehavior = InterruptionBehavior.kCancelIncoming;
+  private int m_priority = -1;
 
   /**
    * Creates a new SequentialCommandGroup. The given commands will be run sequentially, with the
@@ -50,8 +50,8 @@ public class SequentialCommandGroup extends Command {
       m_commands.add(command);
       m_requirements.addAll(command.getRequirements());
       m_runWhenDisabled &= command.runsWhenDisabled();
-      if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
-        m_interruptBehavior = InterruptionBehavior.kCancelSelf;
+      if (command.getPriority() > m_priority) {
+        m_priority = command.getPriority();
       }
     }
   }
@@ -105,8 +105,8 @@ public class SequentialCommandGroup extends Command {
   }
 
   @Override
-  public InterruptionBehavior getInterruptionBehavior() {
-    return m_interruptBehavior;
+  public int getPriority() {
+    return m_priority;
   }
 
   @Override

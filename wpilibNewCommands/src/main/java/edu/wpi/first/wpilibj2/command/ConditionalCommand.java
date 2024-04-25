@@ -74,16 +74,6 @@ public class ConditionalCommand extends Command {
   }
 
   @Override
-  public InterruptionBehavior getInterruptionBehavior() {
-    if (m_onTrue.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf
-        || m_onFalse.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
-      return InterruptionBehavior.kCancelSelf;
-    } else {
-      return InterruptionBehavior.kCancelIncoming;
-    }
-  }
-
-  @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
     builder.addStringProperty("onTrue", m_onTrue::getName, null);

@@ -22,7 +22,7 @@ public class ParallelRaceGroup extends Command {
   private final Set<Command> m_commands = new HashSet<>();
   private boolean m_runWhenDisabled = true;
   private boolean m_finished = true;
-  private InterruptionBehavior m_interruptBehavior = InterruptionBehavior.kCancelIncoming;
+  private int m_priority = -1;
 
   /**
    * Creates a new ParallelCommandRace. The given commands will be executed simultaneously, and will
@@ -56,8 +56,8 @@ public class ParallelRaceGroup extends Command {
       m_commands.add(command);
       m_requirements.addAll(command.getRequirements());
       m_runWhenDisabled &= command.runsWhenDisabled();
-      if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
-        m_interruptBehavior = InterruptionBehavior.kCancelSelf;
+      if (command.getPriority() > m_priority) {
+        m_priority = command.getPriority();
       }
     }
   }
@@ -98,7 +98,7 @@ public class ParallelRaceGroup extends Command {
   }
 
   @Override
-  public InterruptionBehavior getInterruptionBehavior() {
-    return m_interruptBehavior;
+  public int getPriority() {
+    return m_priority;
   }
 }

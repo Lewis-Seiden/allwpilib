@@ -78,8 +78,8 @@ public class RepeatCommand extends Command {
   }
 
   @Override
-  public InterruptionBehavior getInterruptionBehavior() {
-    return m_command.getInterruptionBehavior();
+  public int getPriority() {
+    return m_command.getPriority();
   }
 
   @Override

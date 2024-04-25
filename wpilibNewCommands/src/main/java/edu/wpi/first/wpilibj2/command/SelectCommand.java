@@ -27,7 +27,7 @@ public class SelectCommand<K> extends Command {
   private final Supplier<? extends K> m_selector;
   private Command m_selectedCommand;
   private boolean m_runsWhenDisabled = true;
-  private InterruptionBehavior m_interruptBehavior = InterruptionBehavior.kCancelIncoming;
+  private int m_priority = -1;
 
   private final Command m_defaultCommand =
       new PrintCommand("SelectCommand selector value does not correspond to any command!");
@@ -49,8 +49,8 @@ public class SelectCommand<K> extends Command {
     for (Command command : m_commands.values()) {
       m_requirements.addAll(command.getRequirements());
       m_runsWhenDisabled &= command.runsWhenDisabled();
-      if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
-        m_interruptBehavior = InterruptionBehavior.kCancelSelf;
+      if (command.getPriority() > m_priority) {
+        m_priority = command.getPriority();
       }
     }
   }
@@ -82,8 +82,8 @@ public class SelectCommand<K> extends Command {
   }
 
   @Override
-  public InterruptionBehavior getInterruptionBehavior() {
-    return m_interruptBehavior;
+  public int getPriority() {
+    return m_priority;
   }
 
   @Override

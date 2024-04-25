@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -212,10 +211,9 @@ public final class CommandScheduler implements Sendable, AutoCloseable {
       // and if so, interrupt those commands and schedule the new command.
       for (Subsystem requirement : requirements) {
         Command requiring = requiring(requirement);
-        if (requiring != null
-            && requiring.getInterruptionBehavior() == InterruptionBehavior.kCancelIncoming) {
+        if (requiring != null && requiring.getPriority() > command.getPriority()) {
           return;
-        }
+       }
       }
       for (Subsystem requirement : requirements) {
         Command requiring = requiring(requirement);
@@ -397,14 +395,6 @@ public final class CommandScheduler implements Sendable, AutoCloseable {
 
     if (!defaultCommand.getRequirements().contains(subsystem)) {
       throw new IllegalArgumentException("Default commands must require their subsystem!");
-    }
-
-    if (defaultCommand.getInterruptionBehavior() == InterruptionBehavior.kCancelIncoming) {
-      DriverStation.reportWarning(
-          "Registering a non-interruptible default command!\n"
-              + "This will likely prevent any other commands from requiring this subsystem.",
-          true);
-      // Warn, but allow -- there might be a use case for this.
     }
 
     m_subsystems.put(subsystem, defaultCommand);
