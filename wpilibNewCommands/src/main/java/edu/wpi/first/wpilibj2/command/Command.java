@@ -100,7 +100,7 @@ public abstract class Command implements Sendable {
     return -1;
   }
 
-  public final WrapperCommand setPriority(int priority) {
+  public final WrapperCommand withPriority(int priority) {
     return new WrapperCommand(this) {
       @Override
       public int getPriority() {

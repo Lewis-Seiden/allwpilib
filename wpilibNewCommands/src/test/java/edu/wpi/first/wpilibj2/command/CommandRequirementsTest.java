@@ -46,7 +46,7 @@ class CommandRequirementsTest extends CommandTestBase {
 
       Command notInterrupted =
           new RunCommand(() -> {}, requirement)
-              .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
+              .withPriority(1);
       MockCommandHolder interrupterHolder = new MockCommandHolder(true, requirement);
       Command interrupter = interrupterHolder.getMock();
 

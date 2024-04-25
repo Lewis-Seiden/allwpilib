@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+// import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,53 +25,53 @@ abstract class MultiCompositionTestBase<T extends Command> extends SingleComposi
   static Stream<Arguments> interruptible() {
     return Stream.of(
         arguments(
-            "AllCancelSelf",
-            InterruptionBehavior.kCancelSelf,
+            "AllLowPriority",
+            -1,
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                .withPriority(-1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                .withPriority(-1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf)),
+                .withPriority(-1)),
         arguments(
-            "AllCancelIncoming",
-            InterruptionBehavior.kCancelIncoming,
+            "AllHighPriority",
+            1,
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+                .withPriority(1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+                .withPriority(1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)),
+                .withPriority(1)),
         arguments(
-            "TwoCancelSelfOneIncoming",
-            InterruptionBehavior.kCancelSelf,
+            "TwoLowOneHighPriority",
+            1,
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                .withPriority(-1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                .withPriority(-1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)),
+                .withPriority(1)),
         arguments(
-            "TwoCancelIncomingOneSelf",
-            InterruptionBehavior.kCancelSelf,
+            "TwoHighOneLowPriority",
+            1,
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+                .withPriority(1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+                .withPriority(1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf)));
+                .withPriority(-1)));
   }
 
   @MethodSource
   @ParameterizedTest(name = "interruptible[{index}]: {0}")
   void interruptible(
       @SuppressWarnings("unused") String name,
-      InterruptionBehavior expected,
+      int expected,
       Command command1,
       Command command2,
       Command command3) {
     var command = compose(command1, command2, command3);
-    assertEquals(expected, command.getInterruptionBehavior());
+    assertEquals(expected, command.getPriority());
   }
 
   static Stream<Arguments> runsWhenDisabled() {

@@ -10,7 +10,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -72,36 +71,36 @@ class ConditionalCommandTest extends CommandTestBase {
   static Stream<Arguments> interruptible() {
     return Stream.of(
         arguments(
-            "AllCancelSelf",
-            InterruptionBehavior.kCancelSelf,
+            "AllDefaultPriority",
+            -1,
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                .withPriority(-1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                .withPriority(-1),
             (BooleanSupplier) () -> true),
         arguments(
-            "AllCancelIncoming",
-            InterruptionBehavior.kCancelIncoming,
+            "AllHighPriority",
+            1,
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+                .withPriority(1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+                .withPriority(1),
             (BooleanSupplier) () -> true),
         arguments(
-            "OneCancelSelfOneIncoming",
-            InterruptionBehavior.kCancelSelf,
+            "OneDefaultOneHighPriority",
+            1,
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                .withPriority(-1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+                .withPriority(1),
             (BooleanSupplier) () -> true),
         arguments(
-            "OneCancelIncomingOneSelf",
-            InterruptionBehavior.kCancelSelf,
+            "OneHighOneDefaultPriority",
+            1,
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+                .withPriority(1),
             new WaitUntilCommand(() -> false)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                .withPriority(-1),
             (BooleanSupplier) () -> true));
   }
 
@@ -109,12 +108,12 @@ class ConditionalCommandTest extends CommandTestBase {
   @ParameterizedTest(name = "interruptible[{index}]: {0}")
   void interruptible(
       @SuppressWarnings("unused") String name,
-      InterruptionBehavior expected,
+      int expected,
       Command command1,
       Command command2,
       BooleanSupplier selector) {
     var command = Commands.either(command1, command2, selector);
-    assertEquals(expected, command.getInterruptionBehavior());
+    assertEquals(expected, command.getPriority());
   }
 
   static Stream<Arguments> runsWhenDisabled() {

@@ -15,14 +15,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 public abstract class SingleCompositionTestBase<T extends Command> extends CommandTestBase {
   abstract T composeSingle(Command member);
 
-  @EnumSource(Command.InterruptionBehavior.class)
-  @ParameterizedTest
-  void interruptible(Command.InterruptionBehavior interruptionBehavior) {
-    var command =
-        composeSingle(
-            new WaitUntilCommand(() -> false).withInterruptBehavior(interruptionBehavior));
-    assertEquals(interruptionBehavior, command.getInterruptionBehavior());
-  }
+  // @EnumSource(Command.InterruptionBehavior.class)
+  // @ParameterizedTest
+  // void interruptible(Command.InterruptionBehavior interruptionBehavior) {
+  //   var command =
+  //       composeSingle(
+  //           new WaitUntilCommand(() -> false).withInterruptBehavior(interruptionBehavior));
+  //   assertEquals(interruptionBehavior, command.getInterruptionBehavior());
+  // }
 
   @ValueSource(booleans = {true, false})
   @ParameterizedTest

@@ -74,6 +74,11 @@ public class ConditionalCommand extends Command {
   }
 
   @Override
+  public int getPriority() {
+    return Math.max(m_onTrue.getPriority(), m_onFalse.getPriority());
+  }
+
+  @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
     builder.addStringProperty("onTrue", m_onTrue::getName, null);

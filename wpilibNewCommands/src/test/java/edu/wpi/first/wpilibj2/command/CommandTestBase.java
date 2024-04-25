@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+// import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -49,7 +49,7 @@ public class CommandTestBase {
       when(m_mockCommand.getRequirements()).thenReturn(Set.of(requirements));
       when(m_mockCommand.isFinished()).thenReturn(false);
       when(m_mockCommand.runsWhenDisabled()).thenReturn(runWhenDisabled);
-      when(m_mockCommand.getInterruptionBehavior()).thenReturn(InterruptionBehavior.kCancelSelf);
+      when(m_mockCommand.getPriority()).thenReturn(-1);
     }
 
     public Command getMock() {
