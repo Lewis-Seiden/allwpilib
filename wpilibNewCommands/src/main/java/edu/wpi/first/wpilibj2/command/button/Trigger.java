@@ -49,6 +49,14 @@ public class Trigger implements BooleanSupplier {
     this(CommandScheduler.getInstance().getDefaultButtonLoop(), condition);
   }
 
+  public static InlineTrigger when(EventLoop loop, BooleanSupplier condition) {
+    return new InlineTrigger(loop, condition);
+  }
+
+  public static InlineTrigger when(BooleanSupplier condition) {
+    return new InlineTrigger(condition);
+  }
+
   /**
    * Starts the command when the condition changes.
    *
